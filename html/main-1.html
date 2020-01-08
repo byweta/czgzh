@@ -6,7 +6,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
 		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-		<title>预约检车</title>
+		<title>车检预约主体页面</title>
 		<!-- 引入 WeUI -->
 		<link rel="stylesheet" href="../css/weui/weui.min.css">
 		<!-- 引入 jquery-weui -->
@@ -30,7 +30,7 @@
 		</style>
 	</head>
 	<body ontouchstart>
-		<div class="weui-tab" id="container">
+		<div class="weui-tab">
 			<div class="weui-tab__bd">
 				<iframe id="tabFrm0" src="./make_an_appointment.html" frameborder="0" class="framePage"></iframe>
 				<iframe id="tabFrm1" src="./monitoring_station.html" frameborder="0" class="framePage"></iframe>
@@ -41,7 +41,7 @@
 					<div class="weui-tabbar__icon">
 						<img src="../img/icon_tab_0_a.png" alt="">
 					</div>
-					<p class="weui-tabbar__label">预约检车</p>
+					<p class="weui-tabbar__label">车检预约</p>
 				</a>
 				<a href="javascript:;" data-index="1" class="weui-tabbar__item">
 					<div class="weui-tabbar__icon">
@@ -57,19 +57,17 @@
 				</a>
 			</div>
 		</div>
-		<script type="text/javascript" src="../js/jquery-2.1.4.js" charset="utf-8"></script>
-		<script type="text/javascript" src="../js/fastclick.js" charset="utf-8"></script>
+		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			$(function() {
 				FastClick.attach(document.body);
 			})
 		</script>
-		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script src="../js/jqweui/jquery-weui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			$(function() {
-				var code = fnGetQueryString("code");
-				console.log("=== === >> code: "+code);
-				setJSAPI();
 				$(".framePage").hide();
 				$("#tabFrm0").show();
 				$('.weui-tabbar__item').on('click', function() {
@@ -81,85 +79,20 @@
 						$(this).find("img").attr("src", "../img/icon_tab_0_a.png");
 						$(this).parent().find(".weui-tabbar__icon img:eq(1)").attr("src", "../img/icon_tab_1.png");
 						$(this).parent().find(".weui-tabbar__icon img:eq(2)").attr("src", "../img/icon_tab_2.png");
+						// $("#tabFrm").attr('src', 'http://www.baidu.com/');
 					} else if(tabIndex == "1"){
 						$(this).find("img").attr("src", "../img/icon_tab_1_a.png");
 						$(this).parent().find(".weui-tabbar__icon img:eq(0)").attr("src", "../img/icon_tab_0.png");
 						$(this).parent().find(".weui-tabbar__icon img:eq(2)").attr("src", "../img/icon_tab_2.png");
+						// $("#tabFrm").attr('src', 'http://www.qq.com/');
 					} else if(tabIndex == "2"){
 						$(this).find("img").attr("src", "../img/icon_tab_2_a.png");
 						$(this).parent().find(".weui-tabbar__icon img:eq(0)").attr("src", "../img/icon_tab_0.png");
 						$(this).parent().find(".weui-tabbar__icon img:eq(1)").attr("src", "../img/icon_tab_1.png");
+						// $("#tabFrm").attr('src', 'http://inut5w.natappfree.cc//WeChatDemo/submitsuccess.html');
 					}
 				});
 			});
-			
-			// 获取url参数信息
-			function fnGetQueryString(name) {
-				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-				var r = window.location.search.substr(1).match(reg);
-				//获取url中"?"符后的字符串并正则匹配
-				var context = "";
-				if (r != null)
-					context = r[2];
-				reg = null;
-				r = null;
-				return context == null || context == "" || context == "undefined" ? "" : context;
-			}
-		</script>
-		<script type="text/javascript" src="../js/zepto.min.js" charset="utf-8"></script>
-		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-		<script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
-		<!-- <script type="text/javascript" src="../js/wx-option.js"></script> -->
-		<script type="text/javascript">
-			$(function () {
-				setJSAPI();
-			});
-			// 设置jsAPI
-			function setJSAPI(){
-			    var option = {
-			        title: 'WeUI, 为微信 Web 服务量身设计',
-			        desc: 'WeUI, 为微信 Web 服务量身设计',
-			        link: "https://weui.io",
-			        imgUrl: 'https://mmbiz.qpic.cn/mmemoticon/ajNVdqHZLLA16apETUPXh9Q5GLpSic7lGuiaic0jqMt4UY8P4KHSBpEWgM7uMlbxxnVR7596b3NPjUfwg7cFbfCtA/0'
-			    };
-			    $.getJSON('https://weui.io/api/sign?url=' + encodeURIComponent(location.href.split('#')[0]), function (res) {
-			        console.log(JSON.stringify(res));
-					wx.config({
-			            beta: true,
-			            debug: false,
-			            appId: res.appid,
-			            timestamp: res.timestamp,
-			            nonceStr: res.nonceStr,
-			            signature: res.signature,
-			            jsApiList: [
-			                'onMenuShareTimeline',
-			                'onMenuShareAppMessage',
-			                'onMenuShareQQ',
-			                'onMenuShareWeibo',
-			                'onMenuShareQZone',
-			                'setNavigationBarColor',
-			                'setBounceBackground'
-			            ]
-			        });
-			        wx.ready(function () {
-						wx.invoke('setNavigationBarColor', {
-							color: '#F8F8F8'
-						});
-			            wx.invoke('setBounceBackground', {
-			                'backgroundColor': '#F8F8F8',
-			                'footerBounceColor' : '#F8F8F8'
-			            });
-			            wx.onMenuShareTimeline(option);
-			            wx.onMenuShareQQ(option);
-			            wx.onMenuShareAppMessage({
-			                title: 'WeUI',
-			                desc: '为微信 Web 服务量身设计',
-			                link: location.href,
-			                imgUrl: 'https://mmbiz.qpic.cn/mmemoticon/ajNVdqHZLLA16apETUPXh9Q5GLpSic7lGuiaic0jqMt4UY8P4KHSBpEWgM7uMlbxxnVR7596b3NPjUfwg7cFbfCtA/0'
-			            });
-			        });
-			    });
-			}
 		</script>
 	</body>
 </html>

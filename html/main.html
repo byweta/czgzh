@@ -65,10 +65,14 @@
 			})
 		</script>
 		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 		<script type="text/javascript">
+			var APPID = "wxdbdd2e1c5e8674a7";
+			var SECRET = "ff71eafb5e16fcf6c10eb9812299d5ae";
+			var CODE = "";
 			$(function() {
-				var code = fnGetQueryString("code");
-				console.log("=== === >> code: "+code);
+				CODE = fnGetQueryString("code");
+				console.log("=== === >> code: "+CODE);
 				setJSAPI();
 				$(".framePage").hide();
 				$("#tabFrm0").show();
@@ -105,15 +109,6 @@
 				r = null;
 				return context == null || context == "" || context == "undefined" ? "" : context;
 			}
-		</script>
-		<script type="text/javascript" src="../js/zepto.min.js" charset="utf-8"></script>
-		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-		<script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
-		<!-- <script type="text/javascript" src="../js/wx-option.js"></script> -->
-		<script type="text/javascript">
-			$(function () {
-				setJSAPI();
-			});
 			// 设置jsAPI
 			function setJSAPI(){
 			    var option = {
@@ -122,8 +117,11 @@
 			        link: "https://weui.io",
 			        imgUrl: 'https://mmbiz.qpic.cn/mmemoticon/ajNVdqHZLLA16apETUPXh9Q5GLpSic7lGuiaic0jqMt4UY8P4KHSBpEWgM7uMlbxxnVR7596b3NPjUfwg7cFbfCtA/0'
 			    };
-			    $.getJSON('https://weui.io/api/sign?url=' + encodeURIComponent(location.href.split('#')[0]), function (res) {
-			        console.log(JSON.stringify(res));
+				// https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
+				// $.getJSON('https://weui.io/api/sign?url=' + encodeURIComponent(location.href.split('?')[0]), function (res) {
+			    var url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+APPID+"&secret="+SECRET+"&code="+CODE+"&grant_type=authorization_code";
+				$.get(url, function (res) {
+					console.log(JSON.stringify(res));
 					wx.config({
 			            beta: true,
 			            debug: false,
@@ -141,6 +139,7 @@
 			                'setBounceBackground'
 			            ]
 			        });
+					console.log("=== === >> wx.ready! ")
 			        wx.ready(function () {
 						wx.invoke('setNavigationBarColor', {
 							color: '#F8F8F8'

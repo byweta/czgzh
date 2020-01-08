@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- author：袁玉玲 / createTime：2020年1月6日 -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>检测站负荷win</title>
+		<!-- 引入 WeUI -->
+		<link rel="stylesheet" href="../css/weui/weui.min.css">
+		<!-- 引入 jquery-weui -->
+		<link rel="stylesheet" href="../css/jqweui/jquery-weui.css">
+		<style>
+			body,html {
+                margin: 0;
+                padding: 0;
+            }
+            .station {
+                height: 75px;
+                width: 100%;
+                border-bottom: 1px solid #ccc;
+                display: flex;
+                display: -webkit-flex;
+                /*align-items: center;
+                -webkit-align-items:center;*/
+            }
+            .station_icon {
+                margin-top: 8px;
+                height: 50px;
+                width: 40px;
+                background: url(../image/icon.png) top no-repeat;
+                background-size: 20px;
+            }
+            .station_name {
+                margin-top: 10px;
+                font-size: 14px;
+                color: #333333;
+                width: 100%;
+            }
+            .station_names{
+                margin: 0 10px 0 0px;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items:center;
+                justify-content: space-between;
+                -webkit-justify-content:space-between;
+                /*justify-content: space-around;
+                -webkit-justify-content:space-around;*/
+            }
+            .station_name2 {
+
+            }
+            .station_name3 {
+                margin:5px 20px 5px 5px;
+                height: 6px;
+                background-color: #ccc;
+                border-radius: 4px;
+                position: relative;
+            }
+            .station_name3_active {
+                /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#4bd93c+0,ffd900+50,e9322b+100 */
+                background: rgb(75,217,60); /* Old browsers */
+                background: -moz-linear-gradient(left, rgba(75,217,60,1) 0%, rgba(255,217,0,1) 50%, rgba(233,50,43,1) 100%); /* FF3.6-15 */
+                background: -webkit-linear-gradient(left, rgba(75,217,60,1) 0%,rgba(255,217,0,1) 50%,rgba(233,50,43,1) 100%); /* Chrome10-25,Safari5.1-6 */
+                background: linear-gradient(to right, rgba(75,217,60,1) 0%,rgba(255,217,0,1) 50%,rgba(233,50,43,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4bd93c', endColorstr='#e9322b',GradientType=1 ); /* IE6-9 */
+            }
+            .station_circle1{
+                height: 7px;
+                width: 7px;
+                /* border-radius: 50%; */
+                border: 2px solid #4BD93C;
+                border-radius: 50%;
+                position: relative;
+                left: -9px;
+                top: -3px
+            }
+            .station_circle_1{
+                height: 5px;
+                width: 5px;
+                border-radius: 50%;
+                background-color: #4BD93C;
+                position: absolute;
+                top: 1px;
+                left: 1px;
+            }
+            .station_circle2 {
+                height: 7px;
+                width: 7px;
+                /* border-radius: 50%; */
+                border: 2px solid #F9A60E;
+                border-radius: 50%;
+                position: relative;
+                left: 50%;
+                top: -13px;
+            }
+            .station_circle_2{
+                height: 5px;
+                width: 5px;
+                border-radius: 50%;
+                background-color: #F9A60E;
+                position: absolute;
+                top: 1px;
+                left: 1px;
+            }
+            .station_circle3 {
+                height: 7px;
+                width: 7px;
+                /* border-radius: 50%; */
+                border: 2px solid #E9322B;
+                border-radius: 50%;
+                position: absolute;
+                right: -9px;
+                top: -3px;
+            }
+            .station_circle_3{
+                height: 5px;
+                width: 5px;
+                border-radius: 50%;
+                background-color: #E9322B;
+                position: relative;
+                top: 1px;
+                left: 1px;
+            }
+            .station_names_ {
+                height: 15px;
+                line-height: 15px;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items:center;
+                font-size: 11px;
+                color: #696969;
+                position: relative;
+            }
+            .station_name_1{
+                position: absolute;
+                top: 0;
+                left: -8px;
+            }
+            .station_name_2{
+                position: absolute;
+                top: 0;
+                left: 47%;
+            }
+            .station_name_3{
+                position: absolute;
+                top: 0;
+                right: 5px;
+            }
+            .station_people {
+                margin-top: 3px;
+                font-size: 11px;
+            }
+        </style>
+	</head>
+	<body ontouchstart>
+		<div class="stations" id="station">
+			<div class="station">
+				<div class="station_icon"></div>
+				<div class="station_name">
+					<div class="station_names">
+						<div class="station_name1">长治市给力机动车检测站有限公司</div>
+						<div class="station_name2">700m</div>
+					</div>
+					<div class="station_people">当前排队101</div>
+					<div class="station_name3 station_name3_active">
+						<div class="station_circle1">
+							<div class="station_circle_1">
+							</div>
+						</div>
+						<div class="station_circle2">
+							<div class="station_circle_2">
+
+							</div>
+						</div>
+						<div class="station_circle3">
+							<div class="station_circle_3">
+
+							</div>
+						</div>
+					</div>
+					<div class="station_names_">
+						<div class="station_name_1">
+							通畅
+						</div>
+						<div class="station_name_2">
+							适中
+						</div>
+						<div class="station_name_3">
+							拥挤
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="station">
+				<div class="station_icon"></div>
+				<div class="station_name">
+					<div class="station_names">
+						<div class="station_name1">长治市给力机动车检测站有限公司</div>
+						<div class="station_name2">700m</div>
+					</div>
+					<div class="station_people">当前排队101</div>
+					<div class="station_name3 station_name3_active">
+						<div class="station_circle1">
+							<div class="station_circle_1">
+							</div>
+						</div>
+						<div class="station_circle2">
+							<div class="station_circle_2">
+
+							</div>
+						</div>
+						<div class="station_circle3">
+							<div class="station_circle_3">
+
+							</div>
+						</div>
+					</div>
+					<div class="station_names_">
+						<div class="station_name_1">
+							通畅
+						</div>
+						<div class="station_name_2">
+							适中
+						</div>
+						<div class="station_name_3">
+							拥挤
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				FastClick.attach(document.body);
+			})
+		</script>
+		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../script/vue.js"></script>
+		<script type="text/javascript" src="../script/layui/layui.all.js"></script>
+		<script type="text/javascript">
+			// 初始化双向绑定模型
+			var vue = new Vue({
+				el: '#station',
+				data: {},
+				methods: {
+
+				}
+			});
+		</script>
+	</body>
+</html>

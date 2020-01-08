@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- author：袁玉玲 / createTime：2020年1月6日 -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>检测记录win</title>
+		<!-- 引入 WeUI -->
+		<link rel="stylesheet" href="../css/weui/weui.min.css">
+		<!-- 引入 jquery-weui -->
+		<link rel="stylesheet" href="../css/jqweui/jquery-weui.css">
+		<style>
+			body,html {
+                margin: 0;
+                padding: 0;
+            }
+            .record_tabs {
+                margin:10px 5px 0 5px;
+                background-color: #F5F5F5;
+            }
+            .record_tab1 {
+                margin: 3px;
+                background-color: #ffffff;
+            }
+            .record_first {
+                padding-left: 5px;
+                height: 30px;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items: center;
+                font-size: 16px;
+                font-weight: 700;
+                color: #333333;
+            }
+            .record_first1 {
+                width: 30px;
+                height: 30px;
+                background: url(../image/icon.png) center no-repeat;
+                background-size: 20px;
+            }
+            .record_second{
+                padding-left:30px;
+                height: 15px;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items: center;
+                font-size: 12px;
+                color: #333333;
+            }
+            .record_second1 {
+                width: 5%;
+                height: 15px;
+                background: url(../image/jcz.png) center no-repeat;
+                background-size: 10px;
+            }
+            .record_second2 {
+                width: 50%;
+            }
+            .record_second3{
+                width: 5%;
+                height: 15px;
+                background: url(../image/time.png) center no-repeat;
+                background-size: 10px;
+            }
+            .record_second4 {
+                width: 40%;
+            }
+            .record_end {
+                height: 50px;
+                padding-left: 30px;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items: center;
+            }
+            .record_end1 {
+                width: 85%;
+            }
+            .record_third {
+                /*height: 20px;*/
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items: center;
+                font-size: 14px;
+                color: #333333;
+            }
+            .record_end2 {
+                width: 15%;
+                height: 30px;
+                background: url(../image/bhg.png) center no-repeat;
+                background-size: 30px;
+            }
+            .record_tab2 {
+                height: 20px;
+                width: 100%;
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+                box-shadow: 0px 2px #ccc;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items: center;
+                justify-content: center;
+                -webkit-justify-content: center;
+                font-size: 14px;
+                color: #333333;
+            }
+            .record_text {
+            }
+            .record_icon {
+                height: 20px;
+                width: 20px;
+                background: url(../image/jinru.png) center no-repeat;
+                background-size: 12px;
+            }
+        </style>
+	</head>
+	<body ontouchstart>
+		<div class="record" id="record">
+			<div class="record_tabs">
+				<div class="record_tab1">
+					<div class="record_first">
+						<div class="record_first1"></div>
+						<div class="record_first2">第一次检测</div>
+					</div>
+					<div class="record_second">
+						<div class="record_second1"></div>
+						<div class="record_second2">长治给力机动车检测站</div>
+						<div class="record_second3"></div>
+						<div class="record_second4">2019-12-07 13:38:08</div>
+					</div>
+					<div class="record_end">
+						<div class="record_end1">
+							<div class="record_third">
+								<div class="record_third1">检测结果:</div>
+								<div class="record_third2">不合格</div>
+							</div>
+							<div class="record_third">
+								<div class="record_third1">不合格项:</div>
+								<div class="record_third2">没有三角警示牌和灭口器</div>
+							</div>
+						</div>
+						<div class="record_end2">
+
+						</div>
+					</div>
+				</div>
+				<div class="record_tab2">
+					<div class="record_text">
+						测试报告
+					</div>
+					<div class="record_icon"></div>
+				</div>
+			</div>
+			<div class="record_tabs">
+				<div class="record_tab1">
+					<div class="record_first">
+						<div class="record_first1"></div>
+						<div class="record_first2">第一次检测</div>
+					</div>
+					<div class="record_second">
+						<div class="record_second1"></div>
+						<div class="record_second2">长治给力机动车检测站</div>
+						<div class="record_second3"></div>
+						<div class="record_second4">2019-12-07 13:38:08</div>
+					</div>
+					<div class="record_end">
+						<div class="record_end1">
+							<div class="record_third">
+								<div class="record_third1">检测结果:</div>
+								<div class="record_third2">不合格</div>
+							</div>
+							<div class="record_third">
+								<div class="record_third1">不合格项:</div>
+								<div class="record_third2">没有三角警示牌和灭口器</div>
+							</div>
+						</div>
+						<div class="record_end2">
+
+						</div>
+					</div>
+				</div>
+				<div class="record_tab2">
+					<div class="record_text">
+						测试报告
+					</div>
+					<div class="record_icon"></div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				FastClick.attach(document.body);
+			})
+		</script>
+		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../script/vue.js"></script>
+		<script type="text/javascript" src="../script/layui/layui.all.js"></script>
+		<script type="text/javascript">
+			// 初始化双向绑定模型
+			var vue = new Vue({
+				el: '#record',
+				data: {},
+				methods: {
+
+				}
+			});
+		</script>
+	</body>
+</html>

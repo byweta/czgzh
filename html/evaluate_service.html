@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- author：袁玉玲 / createTime：2020年1月6日 -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>评论检车服务win</title>
+		<!-- 引入 WeUI -->
+		<link rel="stylesheet" href="../css/weui/weui.min.css">
+		<!-- 引入 jquery-weui -->
+		<link rel="stylesheet" href="../css/jqweui/jquery-weui.css">
+		<link rel="stylesheet" type="text/css" href="../script/layui/css/layui.css" />
+		<style>
+			body,html {
+                margin: 0;
+                padding: 0;
+            }
+            .service_bg{
+                margin: 50px 15px;
+                height: 350px;
+                background: url(../image/fwpj_bg.png) center no-repeat;
+                background-size: 100% 100%;
+            }
+            .service_name{
+                padding: 65px 10px 0 10px;
+                height: 30px;
+                line-height: 30px;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items;
+                font-size: 14px;
+                color: #333;
+                font-weight: 700;
+            }
+            .service_name1 {
+                width: 30%;
+            }
+            .service_icons {
+                height: 30px;
+                width: 70%;
+                display: flex;
+                display: -webkit-flex;
+                align-items: center;
+                -webkit-align-items;
+            }
+            .service_icon {
+                height: 30px;
+                width: 20%;
+                background: url(../image/xing.png) center no-repeat;
+                background-size: 18px;
+            }
+            .service_name_{
+                padding: 10px 10px 0 10px;
+            }
+		    textarea {
+		    	margin: 15px 10px 0 10px;
+		    	padding: 8px 5px;
+		    	box-sizing: border-box;
+		    	width: 90%;
+		    	min-height: 80px;
+		    	font-size: 14px;
+		    	color: #919191;
+		    	border-radius: 4px;
+		    	background: #EFEFEF;
+		    	outline: none;
+                border: 0;
+		    }
+            .service_btn {
+                margin: 10px 10px 0 10px;
+                height: 45px;
+				line-height: 45px;
+                width: 90%;
+				background-color: #00A0E9;
+				font-size: 18px;
+				text-align: center;
+				color: #ffffff;
+				border-radius: 4px;
+            }
+            .layui-inline {
+                margin-left: 10px;
+            }
+        </style>
+	</head>
+	<body ontouchstart>
+		<div class="service" id="service">
+			<div class="service_bg">
+				<div class="service_name">
+					<div class="service_name1">
+						服务效率
+					</div>
+					<div class="service_icons" id="test1">
+						<!-- <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div> -->
+					</div>
+				</div>
+				<div class="service_name service_name_">
+					<div class="service_name1">
+						服务态度
+					</div>
+					<div class="service_icons" id="test2">
+						<!-- <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div> -->
+					</div>
+				</div>
+				<div class="service_name service_name_">
+					<div class="service_name1">
+						服务专业度
+					</div>
+					<div class="service_icons" id="test3">
+						<!-- <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div>
+                        <div class="service_icon"></div> -->
+					</div>
+				</div>
+				<textarea name="" rows="" cols="" placeholder="本次检测的体会心得"></textarea>
+				<div class="service_btn">提交</div>
+			</div>
+		</div>
+
+		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				FastClick.attach(document.body);
+			})
+		</script>
+		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../script/vue.js"></script>
+		<script type="text/javascript" src="../script/layui/layui.all.js"></script>
+		<script type="text/javascript">
+			// 初始化双向绑定模型
+			var vue = new Vue({
+				el: '#service',
+				data: {},
+				methods: {
+
+				}
+			});
+
+			layui.use('rate', function() {
+				var rate = layui.rate;
+				//渲染
+				var ins1 = rate.render({
+					elem: '#test1', //绑定元素
+					choose: function(value) {
+						alert(value);
+					}
+				});
+				var ins2 = rate.render({
+					elem: '#test2', //绑定元素
+					choose: function(value) {
+						alert(value);
+					}
+				});
+				var ins3 = rate.render({
+					elem: '#test3', //绑定元素
+					choose: function(value) {
+						alert(value);
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

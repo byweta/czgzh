@@ -57,6 +57,7 @@
 				</a>
 			</div>
 		</div>
+		<script type="text/javascript" src="../js/url.js" charset="utf-8"></script>
 		<script type="text/javascript" src="../js/jquery-2.1.4.js" charset="utf-8"></script>
 		<script type="text/javascript" src="../js/fastclick.js" charset="utf-8"></script>
 		<script type="text/javascript">
@@ -67,13 +68,11 @@
 		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
 		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 		<script type="text/javascript">
-			var APPID = "wxdbdd2e1c5e8674a7";
-			var SECRET = "ff71eafb5e16fcf6c10eb9812299d5ae";
 			var CODE = "";
 			$(function() {
 				CODE = fnGetQueryString("code");
 				console.log("=== === >> code: "+CODE);
-				setJSAPI();
+				// fnGetWxOpenId();
 				$(".framePage").hide();
 				$("#tabFrm0").show();
 				$('.weui-tabbar__item').on('click', function() {
@@ -109,6 +108,33 @@
 				r = null;
 				return context == null || context == "" || context == "undefined" ? "" : context;
 			}
+			
+			// 获取当前微信用户的openId
+			function fnGetWxOpenId(){
+				// var url = mHost + mServerName + "";
+				var url = "http://192.168.120.218:8080/getWxOpenId";
+				var params = {
+					code: CODE
+				}
+				$.ajax({
+					type: "post",
+					url: url,
+					data: params,
+					dataType: "jsonp",
+					success: function (result) {
+						console.log("获取当前微信用户的openId: "+JSON.stringify(result));
+						if(result.status == 1){
+							
+						} else {
+							
+						}
+					},
+					error: function (jqXHR, textStatus) {
+						
+					}
+				});
+			}
+			
 			// 设置jsAPI
 			function setJSAPI(){
 			    var option = {

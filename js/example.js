@@ -211,7 +211,8 @@ $(function () {
         };
 
         $.getJSON('https://weui.io/api/sign?url=' + encodeURIComponent(location.href.split('#')[0]), function (res) {
-            wx.config({
+            $.alert(JSON.stringify(res));
+			wx.config({
                 beta: true,
                 debug: false,
                 appId: res.appid,

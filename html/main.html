@@ -69,6 +69,7 @@
 		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 		<script type="text/javascript">
 			var CODE = "";
+			var openId = "";
 			$(function() {
 				CODE = fnGetQueryString("code");
 				console.log("=== === >> code: "+CODE);
@@ -120,11 +121,14 @@
 					type: "post",
 					url: url,
 					data: params,
-					dataType: "jsonp",
+					dataType: "json",
 					success: function (result) {
 						console.log("获取当前微信用户的openId: "+JSON.stringify(result));
-						if(result.status == 1){
-							
+						// 获取到的access_token数据
+						// {"access_token":"29_s0guadAYncWLg-Sg4B3lgvSzHPchWlEK90POe_0WD8ZkcxKtDOjOG3SVqmc6tfjehl9fo9dqnZMysQeG012V9Q","expires_in":7200,"refresh_token":"29_sjaxqi6PQIy11fcS9AvIu7U9kRODVygeEOU3KfZatMXkqrSD2kamFLrcPnygYDGtipqsNinZ_1VY4ve5N8useg","openid":"oUcl1v1ReMBkPrtyDcW9uGI_JAkw","scope":"snsapi_base"}
+						if(result.openid){
+							openId = result.openid;
+							window.localStorage.setItem("openId", openId);
 						} else {
 							
 						}

@@ -73,6 +73,7 @@
 			$(function() {
 				CODE = fnGetQueryString("code");
 				console.log("=== === >> code: "+CODE);
+				// 获取微信openId
 				fnGetWxOpenId();
 				$(".framePage").hide();
 				$("#tabFrm0").show();
@@ -130,7 +131,7 @@
 							openId = result.openid;
 							window.localStorage.setItem("openId", openId);
 						} else {
-							
+							fnGetWxOpenId();
 						}
 					},
 					error: function (jqXHR, textStatus) {

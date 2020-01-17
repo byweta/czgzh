@@ -11,6 +11,7 @@
 		<link rel="stylesheet" href="../css/weui/weui.min.css">
 		<!-- 引入 jquery-weui -->
 		<link rel="stylesheet" href="../css/jqweui/jquery-weui.css">
+		<link rel="stylesheet" type="text/css" href="../script/layui/css/layui.css" />
 		<style>
 			body,html {
                 margin: 0;
@@ -62,7 +63,7 @@
 				background-size: 18px;
 			}
 			.login_title5{
-				color: #A1A1A1;
+				/* color: #A1A1A1; */
 				width: 70%;
 				border: 0;
 				outline: none;
@@ -79,6 +80,17 @@
 				color: #ffffff;
 				border-radius: 4px;
 			}
+			.login_radios {
+				width: 100%;
+			}
+			.login_radio1 {
+				height: 20px;
+			}
+			.login_radio {
+				width: 15%;
+				margin-left: 5px;
+				height: 14px;
+			}
         </style>
 	</head>
 	<body ontouchstart>
@@ -86,44 +98,75 @@
 			<div class="login_bg"></div>
 			<div class="login_titles">
 				<div class="login_title">
-					<div class="login_title1">监测站</div>
-					<input type="text" class="login_title2" placeholder="请选择.." readonly="readonly" v-model="mapLocation">
+					<div class="login_title1">检测站</div>
+					<input type="text" class="login_title2" placeholder="请选择.." readonly="readonly" v-model="record.mapLocation">
 					<div class="login_title3" tapmode onclick="fnOpenMap()"></div>
 				</div>
 				<div class="login_title">
-					<div class="login_title1">监测时间</div>
-					<input type="text" class="login_title2" placeholder="请选择.." readonly="readonly">
-					<div class="login_title4"></div>
+					<div class="login_title1">检测时间</div>
+					<input type="text" class="login_title2" placeholder="请选择.." readonly="readonly" v-model="record.date" id='datetime-picker' />
+					<div class="login_title4" id='datetime-picker'></div>
 				</div>
-				<div class="login_title" v-show="mapLocation =='' ? show : !show ">
-					<div class="login_title1">排队序号</div>
-					<input type="text" class="login_title5" value="111">
+				<div class="login_title" v-show="record.mapLocation =='' ? record.show : !record.show ">
+					<div class="login_title1">已排队序号</div>
+					<input type="text" class="login_title5" readonly="readonly" value="" v-model="record.yys">
 				</div>
-				<div class="login_title" v-show="mapLocation =='' ? show : !show ">
-					<div class="login_title1">建议监测时间</div>
+				<!-- <div class="login_title" v-show="record.mapLocation =='' ? record.show : !record.show ">
+					<div class="login_title1">建议检测时间</div>
 					<input type="text" class="login_title5" value="2019-10-20">
-				</div>
+				</div> -->
 				<div class="login_title">
 					<div class="login_title1">车牌号</div>
-					<input type="text" class="login_title5" value="豫A3R43E">
+					<input type="text" class="login_title5" placeholder="请输入车牌号(如:晋AXXXXX)" value="" v-model="record.cphm">
 				</div>
 				<div class="login_title">
-					<div class="login_title1">手机号码</div>
-					<input type="text" class="login_title5" value="13238492378">
+					<div class="login_title1">车牌颜色</div>
+					<div class="login_radios">
+						<div class="login_radio1">
+							<label>
+								<input type="radio" class="login_radio" value="0" v-model="record.color" name="color">蓝
+							</label>
+							<label>
+								<input type="radio" class="login_radio" value="1" v-model="record.color" name="color">黄
+							</label>
+							<label>
+								<input type="radio" class="login_radio" value="2" v-model="record.color" name="color">白
+							</label>
+							<label>
+								<input type="radio" class="login_radio" value="3" v-model="record.color" name="color">黑
+							</label>
+						</div>
+						<label>
+							<input type="radio" class="login_radio" value="4" v-model="record.color" name="color">绿
+						</label>
+						<label>
+							<input type="radio" class="login_radio" value="5" v-model="record.color" name="color">红
+						</label>
+					</div>
+				</div>
+				<div class="login_title">
+					<div class="login_title1">手机号</div>
+					<input type="text" class="login_title5" value="" placeholder="请输入手机号" v-model="record.sjh">
 				</div>
 			</div>
-			<div class="login_btn">
+			<div class="login_btn" tapmode onclick="fnBtn()">
 				提交
 			</div>
 		</div>
-		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<!-- <script type="text/javascript" src="../js/jquery-2.1.4.js" charset="utf-8"></script> -->
+		<script src="../js/jquery-1.12.4-min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/fastclick.js" charset="utf-8"></script>
 		<script type="text/javascript">
 			$(function() {
 				FastClick.attach(document.body);
-			})
+			});
+			String.prototype.replaceAll = function(s1,s2){
+			    return this.replace(new RegExp(s1,"gm"),s2);
+			}
 		</script>
 		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/url.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/date.js" charset="utf-8"></script>
 		<script type="text/javascript" src="../script/vue.js"></script>
 		<script type="text/javascript" src="../script/layui/layui.all.js"></script>
 		<script type="text/javascript">
@@ -131,13 +174,169 @@
 			var vue = new Vue({
 				el: '#login',
 				data: {
-					show: false,
-					mapLocation: '郑州'
+					record: {
+						show: false,
+						pkid: '',
+						mapLocation: '',
+						yys: '',
+						date: '',
+						cphm: '',
+						sjh: '',
+						cpys: '',
+						color: '',
+					}
 				},
 				methods: {
 
 				}
 			});
+			// 微信用户openId
+			var openId = "";
+			$(function(){
+				// 获取存储的微信用户openId
+				openId = window.localStorage.getItem("openId");
+				if(openId == undefined || openId == ''){
+					var timer = setInterval(function(){
+						openId = window.localStorage.getItem("openId");
+						if(openId != undefined && openId != ''){
+							clearInterval(timer);
+						}
+					}, 50);
+				}
+				vue.$data.record.date = new Date().Format("yyyy-MM-dd");
+				var data = JSON.parse(window.localStorage.getItem("data"));
+				if(data != undefined && data != null){
+					vue.$data.record = data;
+				}
+				var spkid = window.localStorage.getItem("spkid");
+				vue.$data.record.pkid = (spkid!=undefined && spkid!=null)?spkid:'';
+				var checkDate = window.localStorage.getItem("checkDate");
+				if(checkDate!=undefined && checkDate!=null){
+					vue.$data.record.date = checkDate;
+				}
+				var jczjc = window.localStorage.getItem("jczjc");
+				vue.$data.record.mapLocation = (jczjc!=undefined && jczjc!=null)?jczjc:'';
+				var yys = window.localStorage.getItem("yys");
+				vue.$data.record.yys = (yys!=undefined && yys!=null)?Number(yys):'1';
+			});
+			// 选择检测时间
+			$("#datetime-picker").datetimePicker({
+				min : new Date().Format("yyyy-MM-dd"),
+				times: function() {
+					return;
+				},
+				parse: function(str) {
+					var t = str.split(this.datetimeSplit);
+					return t[0].split(/\D/).concat(t[1]);
+				},
+				onChange: function(picker, values, displayValues) {
+					var values = values[0] + "-" + values[1] + "-" + values[2];
+					vue.$data.record.date = values;
+					console.log(vue.$data.record.date);
+				}
+			});
+			// 提交
+			function fnBtn() {
+				var carNum = vue.$data.record.cphm;
+				if (carNum != '') {
+					carNum = carNum.replaceAll(" ", "");
+					vue.$data.record.cphm = carNum;
+					var result = false;
+					if (carNum.length == 7) {
+						var express7 = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1}$/;
+						result = express7.test(carNum);
+					} else if (carNum.length == 8) {
+						var express8 =
+							/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF]$)|([DF][A-HJ-NP-Z0-9][0-9]{4}$))/;
+						result = express8.test(carNum);
+					}
+					if (!result) {
+						layer.msg("车牌号码格式错误！");
+						return;
+					}
+				} else {
+					layer.msg("车牌号不能为空！");
+					return;
+				}
+				// 车牌颜色更改
+				var color_val = Number(vue.$data.record.color);
+				if (color_val == 0) {
+					vue.$data.record.cpys = "蓝";
+				} else if (color_val == 1) {
+					vue.$data.record.cpys = "黄";
+				} else if (color_val == 2) {
+					vue.$data.record.cpys = "白";
+				} else if (color_val == 3) {
+					vue.$data.record.cpys = "黑";
+				} else if (color_val == 4) {
+					vue.$data.record.cpys = "绿";
+				} else if (color_val == 5) {
+					vue.$data.record.cpys = "红";
+				}
+				var phone = vue.$data.record.sjh;
+				if (phone.length == 0) {
+					layer.msg('手机号码不能为空');
+					return;
+				}
+				var phones = /^1[3456789]\d{9}$/;
+				var phoneNum = phones.test(phone);
+				if (!phoneNum) {
+					layer.msg('手机号码格式不对，请重新输入！');
+					return;
+				}
+				fnAddAppointment();
+			}
+			// 进入地图选择
+			function fnOpenMap() {
+				window.localStorage.setItem("data", JSON.stringify(vue.$data.record));
+				// console.log("=== === >> 打开地图页面。");
+				window.top.location.href = "../html/bmap.html";
+			}
+			// 预约信息提交
+			var addAppointmentUrl = "/gzh/setYyCj.yt";
+			// 提交预约信息
+			function fnAddAppointment() {
+				var url = mHost + mServerName + addAppointmentUrl;
+				var params = {
+					jczid: vue.$data.record.pkid,
+					jcsj: vue.$data.record.date,
+					cphm: vue.$data.record.cphm,
+					sjh: vue.$data.record.sjh,
+					cpys: vue.$data.record.cpys,
+					openId: openId
+				}
+				$.ajax({
+					type: "post",
+					url: url,
+					data: params,
+					dataType: "jsonp",
+					success: function(result) {
+						console.log("预约车检信息提交: " + JSON.stringify(result));
+						if (result.code == 1) {
+							// {"msg":"ok","code":1,"data":{"pdxh":1}}
+							// layer.msg('提交成功！您的排队序号为：'+result.data.pdxh);
+							$.toptip('预约成功', 2000, 'success');
+							window.localStorage.clear();
+							window.localStorage.setItem("openId", openId);
+							$.alert({
+								title: '预约成功！',
+								text: '您已成功预约'+vue.$data.record.date+'日的车检，排队序号为'+result.data.pdxh,
+								onOK: function () {
+									//点击确认
+									setTimeout(function(){
+										window.location.reload();
+									}, 1000);
+								}
+							});
+						} else {
+							layer.msg('预约车检信息提交失败');
+						}
+					},
+					error: function(jqXHR, textStatus) {
+
+					}
+				});
+			}
 		</script>
 	</body>
 </html>

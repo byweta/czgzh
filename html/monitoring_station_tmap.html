@@ -6,7 +6,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
 		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-		<title>检测站</title>
+		<title>检测站负荷win</title>
 		<!-- 引入 WeUI -->
 		<link rel="stylesheet" href="../css/weui/weui.min.css">
 		<!-- 引入 jquery-weui -->
@@ -67,17 +67,6 @@
                 background: linear-gradient(to right, rgba(75,217,60,1) 0%,rgba(255,217,0,1) 50%,rgba(233,50,43,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4bd93c', endColorstr='#e9322b',GradientType=1 ); /* IE6-9 */
             }
-			.right_bar {
-				position: absolute;
-				top: 0;
-				right: 0;
-				width: 0%;
-				height: 6px;
-				background-color: #F6F6F6;
-				border-top-right-radius: 3px;
-				border-bottom-right-radius: 3px;
-				z-index: 98;
-			}
             .station_circle1{
                 height: 7px;
                 width: 7px;
@@ -86,8 +75,7 @@
                 border-radius: 50%;
                 position: relative;
                 left: -9px;
-                top: -3px;
-				z-index: 99;
+                top: -3px
             }
             .station_circle_1{
                 height: 5px;
@@ -107,7 +95,6 @@
                 position: relative;
                 left: 50%;
                 top: -13px;
-				z-index: 99;
             }
             .station_circle_2{
                 height: 5px;
@@ -127,7 +114,6 @@
                 position: absolute;
                 right: -9px;
                 top: -3px;
-				z-index: 99;
             }
             .station_circle_3{
                 height: 5px;
@@ -168,14 +154,6 @@
                 margin-top: 3px;
                 font-size: 11px;
             }
-			#map {
-				width: 1px;
-				height: 1px;
-				position: absolute;
-				bottom: -1px;
-				left: -1px;
-				z-index: 0;
-			}
         </style>
 	</head>
 	<body ontouchstart>
@@ -204,7 +182,6 @@
 
 								</div>
 							</div>
-							<div class="right_bar" :style="fnGetWidth(s)"></div>
 						</div>
 						<div class="station_names_">
 							<div class="station_name_1">
@@ -221,7 +198,6 @@
 				</div>
 			</template>
 		</div>
-		<div id="map"></div>
 		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
@@ -229,7 +205,8 @@
 				FastClick.attach(document.body);
 			})
 		</script>
-		<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=KGXiPSGZBrujz7brgA9SYMv104V4xGcU"></script>
+		<script type="text/javascript" src="http://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+		<script type="text/javascript" src="http://map.qq.com/api/js?v=2.exp&key=WNIBZ-LNHLX-MXM42-7GWIL-GA3KO-YVBKN&libraries=geometry"></script>
 		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
 		<script type="text/javascript" src="../js/url.js"></script>
 		<script type="text/javascript" src="../js/date.js"></script>
@@ -243,31 +220,24 @@
 					dataList: []
 				},
 				methods: {
-					fnGetWidth: function(data){
-						var yys = Number(data.yys);
-						var zdyys = Number(data.zdyys);
-						return "width:"+(1-(yys/zdyys).toFixed(2))*100+"%";
-					}
+
 				}
 			});
 
-			// 用户坐标
-			var userLat = 0,
-				userLng = 0;
-			var map;
-			// 是否有定位
+			//H5定位
+			var lat, lng = null;
+			var map = null;
 			var hasPos = false;
 			$(function() {
-				map = new BMap.Map("map");
 				// 获取定位信息
-				fnGetLocation();
+				fnGetLocation(); // getLocation();
 			});
 
 			// 获取检测站列表数据
 			function fnGetMoniterStation() {
 				var url = mHost + mServerName + "/gzh/getjczSj.yt";
 				var params = {
-					jcrq: new Date().Format("yyyy-MM-dd")
+					jcrq: "", // new Date().Format("yyyy-MM-dd")
 				}
 				$.ajax({
 					type: "GET",
@@ -276,7 +246,7 @@
 					dataType: "jsonp",
 					contentType: "application/json;charset=utf-8",
 					success: function(result) {
-						console.log("获取检测站点数据: " + JSON.stringify(result));
+						console.log("获取检测记录数据: " + JSON.stringify(result));
 						if (result.code != undefined && result.code == '1') {
 							// 获取成功
 							vue.dataList = [];
@@ -285,7 +255,7 @@
 								var distance = "--";
 								if(hasPos){
 									distance = fnGetDistance(dataItem);
-									distance = distance===0?"未知":(Number(distance)<=1000?distance+"m":(Number(distance)/1000).toFixed(2)+'km');
+									distance = distance===0?"未知":distance+"m";
 								}
 								dataItem.distance = distance;
 								vue.dataList.push(dataItem);
@@ -302,29 +272,53 @@
 				});
 			}
 
-			/**用百度获取坐标**/
+			/**用腾讯获取坐标**/
 			function fnGetLocation() {
-				console.log(">> 开始定位 >> ");
-				var geolocation = new BMap.Geolocation();
-				geolocation.getCurrentPosition(function(r) {
-					if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-						console.log("定位成功 >> ");
-						userLng = r.point.lng;
-						userLat = r.point.lat;
-						// TODO 删除下面两行
-						userLng = 112.773321;
-						userLat = 36.326762;
-						hasPos = true;
-						// 获取检测站列表数据
-						fnGetMoniterStation();
-					} else {
-						console.log("定位失败 >> ");
-						console.log('failed' + this.getStatus());
-						hasPos = false;
-						// 获取检测站列表数据
-						fnGetMoniterStation();
-					}
-				});
+				var geolocation = new qq.maps.Geolocation("WNIBZ-LNHLX-MXM42-7GWIL-GA3KO-YVBKN", "myapp");
+				var positionNum = 0;
+				var options = {
+					timeout: 8000
+				};
+				geolocation.getLocation(sucCallback, showError, options);
+			}
+
+			//定位成功回调
+			function sucCallback(position) {
+				console.log("=== === >> 定位信息：" + JSON.stringify(position));
+				// 这里做了经纬度偏差的修正
+				lat = position.lat - 0.002463;
+				lng = position.lng + 0.005591;
+				console.log("=== === >> "+lat+","+lng);
+				hasPos = true;
+				// 获取检测站列表数据
+				fnGetMoniterStation();
+			}
+
+			//定位失败回调
+			function showError(error) {
+				// 获取检测站列表数据
+				fnGetMoniterStation();
+				console.log("=== === >> 获取定位失败...");
+				var errMsg = "";
+				switch (error.code) {
+					case error.PERMISSION_DENIED:
+						// User denied the request for Geolocation.
+						errMsg = "定位失败,用户拒绝请求地理定位"
+						break;
+					case error.POSITION_UNAVAILABLE:
+						// Location information is unavailable.
+						errMsg = "定位失败,位置信息是不可用"
+						break;
+					case error.TIMEOUT:
+						// The request to get user location timed out.
+						errMsg = "定位失败,请求获取用户位置超时"
+						break;
+					case error.UNKNOWN_ERROR:
+						// An unknown error occurred.
+						errMsg = "定位失败,定位系统失效"
+						break;
+				}
+				console.log("=== === >> 失败原因：" + errMsg);
 			}
 
 			function fnGetDistance(station) {
@@ -335,12 +329,10 @@
 					console.log("检测站位置信息缺失")
 					return 0;
 				} else {
-					// 用户位置
-					var u_point = new BMap.Point(userLng, userLat);
-					// 检测站位置
-					var s_point = new BMap.Point(endLng, endLat);
-					// 计算直线距离
-					var distance = map.getDistance(u_point, s_point).toFixed(2);
+					var start = new qq.maps.LatLng(lat, lng);
+					var end = new qq.maps.LatLng(station.wd, station.jd);
+					qq.maps.geometry
+					var distance = Math.round(qq.maps.geometry.spherical.computeDistanceBetween(start, end) * 10) / 10;
 					console.log("=== === 距离站点："+distance + "m");
 					return distance;
 				}

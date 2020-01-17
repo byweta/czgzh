@@ -95,6 +95,12 @@
                 background: url(../image/bhg.png) center no-repeat;
                 background-size: 30px;
             }
+			.record_end2_ok {
+				width: 15%;
+				height: 30px;
+				background: url(../image/hg.png) center no-repeat;
+				background-size: 30px;
+			}
             .record_tab2 {
                 height: 20px;
                 width: 100%;
@@ -122,7 +128,44 @@
 	</head>
 	<body ontouchstart>
 		<div class="record" id="record">
-			<div class="record_tabs">
+			<template v-for="(item, index) in dataList">
+				<div class="record_tabs">
+					<div class="record_tab1">
+						<div class="record_first">
+							<div class="record_first1"></div>
+							<div class="record_first2">第{{index+1}}次检测</div>
+						</div>
+						<div class="record_second">
+							<div class="record_second1"></div>
+							<div class="record_second2">{{item.jczjc}}</div>
+							<div class="record_second3"></div>
+							<div class="record_second4">{{item.jcjs}}</div>
+						</div>
+						<div class="record_end">
+							<div class="record_end1">
+								<div class="record_third">
+									<div class="record_third1">检测结果:</div>
+									<div class="record_third2">{{item.jcjg}}</div>
+								</div>
+								<!-- <div class="record_third">
+									<div class="record_third1">不合格项:</div>
+									<div class="record_third2">没有三角警示牌和灭口器</div>
+								</div> -->
+							</div>
+							<div class="record_end2" :class="fnShowCheckResult(item.jcjg)">
+
+							</div>
+						</div>
+					</div>
+					<div class="record_tab2" @click="fnOpenCheckRecord(item)">
+						<div class="record_text">
+							测试报告
+						</div>
+						<div class="record_icon"></div>
+					</div>
+				</div>
+			</template>
+			<!-- <div class="record_tabs">
 				<div class="record_tab1">
 					<div class="record_first">
 						<div class="record_first1"></div>
@@ -156,42 +199,7 @@
 					</div>
 					<div class="record_icon"></div>
 				</div>
-			</div>
-			<div class="record_tabs">
-				<div class="record_tab1">
-					<div class="record_first">
-						<div class="record_first1"></div>
-						<div class="record_first2">第一次检测</div>
-					</div>
-					<div class="record_second">
-						<div class="record_second1"></div>
-						<div class="record_second2">长治给力机动车检测站</div>
-						<div class="record_second3"></div>
-						<div class="record_second4">2019-12-07 13:38:08</div>
-					</div>
-					<div class="record_end">
-						<div class="record_end1">
-							<div class="record_third">
-								<div class="record_third1">检测结果:</div>
-								<div class="record_third2">不合格</div>
-							</div>
-							<div class="record_third">
-								<div class="record_third1">不合格项:</div>
-								<div class="record_third2">没有三角警示牌和灭口器</div>
-							</div>
-						</div>
-						<div class="record_end2">
-
-						</div>
-					</div>
-				</div>
-				<div class="record_tab2">
-					<div class="record_text">
-						测试报告
-					</div>
-					<div class="record_icon"></div>
-				</div>
-			</div>
+			</div> -->
 		</div>
 		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
@@ -201,17 +209,82 @@
 			})
 		</script>
 		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/url.js"></script>
 		<script type="text/javascript" src="../script/vue.js"></script>
 		<script type="text/javascript" src="../script/layui/layui.all.js"></script>
 		<script type="text/javascript">
 			// 初始化双向绑定模型
 			var vue = new Vue({
 				el: '#record',
-				data: {},
+				data: {
+					dataList : [{}]
+				},
 				methods: {
-
+					fnOpenCheckRecord: fnOpenCheckRecord,
+					fnShowCheckResult: function(result){
+						if(result != undefined && result == '合格')
+							return "record_end2_ok";
+						return "";
+					}
 				}
 			});
+			var openId = "";
+			$(function(){
+				// 获取存储的微信用户openId
+				openId = window.localStorage.getItem("openId");
+				if(openId == undefined || openId == ''){
+					var timer = setInterval(function(){
+						openId = window.localStorage.getItem("openId");
+						if(openId != undefined && openId != ''){
+							clearInterval(timer);
+							// 请求数据
+							fnGetMoniterRecord();
+						}
+					}, 50);
+				} else {
+					// 请求数据
+					fnGetMoniterRecord();
+				}
+			});
+			
+			// 获取检测记录数据
+			function fnGetMoniterRecord(){
+				// return;
+				var url = mHost + mServerName + "/gzh/getOpenIdList.yt";
+				var params = {
+					openid: openId
+				}
+				console.log("=== === >> 参数："+JSON.stringify(params))
+				$.ajax({
+					type: "GET",
+					url: url,
+					data: params,
+					dataType: "jsonp",
+					success: function (result) {
+						console.log("=== === >> 获取检测记录数据: "+JSON.stringify(result));
+						if(result.code != undefined && result.code == '1'){
+							// 获取成功
+							vue.dataList = [];
+							if(result.data.length != 0){
+								vue.dataList = result.data;
+							}
+						} else {
+							// 未获取到数据
+							vue.dataList = [];
+							$.toast("暂无数据！")
+						}
+					},
+					error: function (jqXHR, textStatus) {
+						$.toast("服务异常！")
+					}
+				});
+			}
+			
+			// 查看检测报告
+			function fnOpenCheckRecord(data){
+				window.localStorage.setItem("navIndex", 2);
+				window.top.location.href="../html/evaluate_service.html?data="+escape(JSON.stringify(data));
+			}
 		</script>
 	</body>
 </html>

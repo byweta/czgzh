@@ -6,7 +6,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
 		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-		<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+		<!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
 		<title>预约检车</title>
 		<!-- 引入 WeUI -->
 		<link rel="stylesheet" href="../css/weui/weui.min.css">
@@ -38,19 +38,19 @@
 				<iframe id="tabFrm2" src="./monitoring_record.html" frameborder="0" class="framePage"></iframe>
 			</div>
 			<div class="weui-tabbar">
-				<a href="javascript:;" data-index="0" class="weui-tabbar__item weui-bar__item_on">
+				<a href="javascript:;" data-index="0" id="navIndex0" class="weui-tabbar__item weui-bar__item_on">
 					<div class="weui-tabbar__icon">
 						<img src="../img/icon_tab_0_a.png" alt="">
 					</div>
 					<p class="weui-tabbar__label">预约检车</p>
 				</a>
-				<a href="javascript:;" data-index="1" class="weui-tabbar__item">
+				<a href="javascript:;" data-index="1" id="navIndex1" class="weui-tabbar__item">
 					<div class="weui-tabbar__icon">
 						<img src="../img/icon_tab_1.png" alt="">
 					</div>
 					<p class="weui-tabbar__label">检测站负荷</p>
 				</a>
-				<a href="javascript:;" data-index="2" class="weui-tabbar__item">
+				<a href="javascript:;" data-index="2" id="navIndex2" class="weui-tabbar__item">
 					<div class="weui-tabbar__icon">
 						<img src="../img/icon_tab_2.png" alt="">
 					</div>
@@ -67,18 +67,22 @@
 			})
 		</script>
 		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
-		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js" charset="utf-8"></script>
 		<script type="text/javascript">
 			var CODE = "";
-			var openId = "";
+			var openId = "oUcl1v1ReMBkPrtyDcW9uGI_JAkw";
 			$(function() {
 				CODE = fnGetQueryString("code");
 				console.log("=== === >> code: "+CODE);
 				// 获取微信openId
-				fnGetWxOpenId();
+				// fnGetWxOpenId();
+				// 测试用openId TODO 
+				window.localStorage.setItem("openId", openId);
+				
 				$(".framePage").hide();
 				$("#tabFrm0").show();
 				$('.weui-tabbar__item').on('click', function() {
+					window.localStorage.removeItem("navIndex")
 					$(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
 					var tabIndex = $(this).data("index");
 					$(".framePage").hide();
@@ -97,6 +101,10 @@
 						$(this).parent().find(".weui-tabbar__icon img:eq(1)").attr("src", "../img/icon_tab_1.png");
 					}
 				});
+				var navIndex = window.localStorage.getItem("navIndex");
+				if(navIndex != undefined && navIndex != null && navIndex == 2){
+					$("#navIndex2").click();
+				}
 			});
 			
 			// 获取url参数信息

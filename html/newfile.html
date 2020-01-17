@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>定位+坐标转换</title>
+		<style type="text/css">
+			* {
+				margin: 0px;
+				padding: 0px;
+			}
+			body,
+			button,
+			input,
+			select,
+			textarea {
+				font: 12px/16px Verdana, Helvetica, Arial, sans-serif;
+			}
+			#container {
+				min-width: 600px;
+				min-height: 767px;
+			}
+		</style>
+	</head>
+	<body onLoad="getLocation()">
+		<p>用html5定位后，使用腾讯地图坐标转换接口纠偏，请允许获取位置。</p>
+		<div id="container">
+			
+		</div>
+		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				FastClick.attach(document.body);
+			})
+		</script>
+		<script type="text/javascript" src="https://map.qq.com/api/js?v=2.exp&key=HQPBZ-DWH6R-ZSCWZ-W567H-UUOWS-A5F55&libraries=geometry"></script>
+		<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+		<script type="text/javascript">
+			var html = "开始定位... >>> ";
+			$(function() {
+				// 获取定位信息
+				fnGetLocation(); // getLocation();
+			});
+			/**用腾讯获取坐标**/
+			function fnGetLocation() {
+				var geolocation = new qq.maps.Geolocation("HQPBZ-DWH6R-ZSCWZ-W567H-UUOWS-A5F55", "czgzh-web");
+				$("#container").append("启动定位服务: "+JSON.stringify(geolocation));
+				var positionNum = 0;
+				var options = {
+					timeout: 8000
+				};
+				geolocation.getLocation(sucCallback, showError, options);
+			}
+			
+			//定位成功回调
+			function sucCallback(position) {
+				console.log("=== === >> 定位信息：" + JSON.stringify(position));
+				html += "定位成功 >>> ";
+				// 这里做了经纬度偏差的修正
+				lat = position.lat - 0.002463;
+				lng = position.lng + 0.005591;
+				console.log("=== === >> "+lat+","+lng);
+				html += ("定位信息："+lat+","+lng+" >>> ");
+				$("#container").append(html);
+			}
+			
+			//定位失败回调
+			function showError(error) {
+				html += "定位失败 >>> ";
+				$("#container").append(html);
+				console.log("=== === >> 获取定位失败..."+JSON.stringify(error));
+				$("#container").append("=== "+JSON.stringify(error));
+				var errMsg = "";
+				switch (error.code) {
+					case error.PERMISSION_DENIED:
+						// User denied the request for Geolocation.
+						errMsg = "定位失败,用户拒绝请求地理定位"
+						break;
+					case error.POSITION_UNAVAILABLE:
+						// Location information is unavailable.
+						errMsg = "定位失败,位置信息是不可用"
+						break;
+					case error.TIMEOUT:
+						// The request to get user location timed out.
+						errMsg = "定位失败,请求获取用户位置超时"
+						break;
+					case error.UNKNOWN_ERROR:
+						// An unknown error occurred.
+						errMsg = "定位失败,定位系统失效"
+						break;
+				}
+				console.log("=== === >> 失败原因：" + errMsg);
+				html += ("失败原因：" + errMsg);
+				$("#container").append(html);
+			}
+		</script>
+	</body>
+</html>

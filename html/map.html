@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,width=device-width,initial-scale=1.0, user-scalable=no" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>标题win</title>
+		<link rel="stylesheet" type="text/css" href="../script/layui/css/layui.css" />
+		<link rel="stylesheet" href="../css/weui/weui.min.css">
+		<link rel="stylesheet" href="../css/jqweui/jquery-weui.css">
+		<style>
+			body,
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            position:absolute;
+            width:100%;
+            height: 100%;
+            bottom: 0px;
+            /*height: 500px;
+            width: 100%;*/
+        }
+        .map_ts {
+            height: 35px;
+            width: 80%;
+            background: url(../image/tl.png)  center no-repeat;
+            background-size: 100% 100%;
+            position: fixed;
+            bottom: 30px;
+            left: 10%;
+        }
+    </style>
+		<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+		<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=WNIBZ-LNHLX-MXM42-7GWIL-GA3KO-YVBKN"></script>
+	</head>
+	<body onload="init()">
+		<div class="map" id="map">
+			<div id="container">
+			</div>
+			<div class="map_ts">
+			</div>
+			<!-- <input type="button" class="btn btn-default" id="btn1" value="前一天" tapmode onclck="fnTime()">
+		<input type="text" class="login_title2" readonly="readonly" id='datetime-picker' v-model="date"/>
+		<input type="button" class="btn btn-default" id="btn2" value="后一天"> -->
+			<!-- <div class="date">
+			<input type="button" class="btn btn-default" id="btn1" value="前一天">
+			<input type="date" class="form-control" id="date1" value="">
+			<input type="button" class="btn btn-default" id="btn2" value="后一天">
+		</div> -->
+		</div>
+		<script type="text/javascript" src="../script/vue.js"></script>
+		<script type="text/javascript" src="../script/layui/layui.all.js"></script>
+		<script type="text/javascript" src="../js/jquery-2.1.4.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/url.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript">
+			var vue = new Vue({
+				el: '#map',
+				data: {
+					date: '',
+					timestamp: '',
+					jd: '34.64821',
+					wd: '113.51331'
+				},
+				methods: {
+
+				}
+			});
+			$(function() {
+				fnGetMapStation();
+				coordinate();
+			});
+			var cityLocation, map, marker = null;
+			var latLngs;
+			var userLat = 0, userLng = 0;
+			/**用腾讯获取坐标**/
+			function coordinate() {
+				var geolocation = new qq.maps.Geolocation("WNIBZ-LNHLX-MXM42-7GWIL-GA3KO-YVBKN", "myapp");
+				var positionNum = 0;
+				var options = {
+					timeout: 8000
+				};
+				geolocation.getLocation(sucCallback, showErr, options);
+			}
+			//定位成功回调
+			function sucCallback(position) {
+				var mapInfo = JSON.stringify(position, null, 4);
+				var jsonMapInfo = eval('(' + mapInfo + ')');
+				console.log("腾讯经度为:" + jsonMapInfo.lng + ",腾讯纬度为:" + jsonMapInfo.lat);
+				userLat = jsonMapInfo.lat;
+				userLng = jsonMapInfo.lng;
+				init();
+				var latLng = new qq.maps.LatLng(jsonMapInfo.lat, jsonMapInfo.lng);
+				citylocation.searchCityByLatLng(latLng);
+			}
+
+			//定位失败回调
+			function showErr() {
+				layer.msg("定位失败");
+			}
+			//初始化函数
+			var init = function() {
+				//获取地图显示控件
+				var center = new qq.maps.LatLng(userLat, userLng);
+				map = new qq.maps.Map(document.getElementById("container"), {
+					//加载地图经纬度信息
+					center: center,
+					zoom: 13, //设置缩放级别
+					draggable: true, //设置是否可以拖拽
+					scrollwheel: false, //设置是否可以滚动
+					disableDoubleClickZoom: true, //设置是否可以双击放大
+					zoomControl: false, //启用缩放控件
+					disableDefaultUI: false //禁止全部控件
+				});
+				//调用城市服务信息
+				citylocation = new qq.maps.CityService({
+					complete: function(results) {
+						map.setCenter(results.detail.latLng);
+						if (marker != null) {
+							marker.setMap(null);
+						}
+						// 个人定位图标
+						var anchor = new qq.maps.Point(0, 0),
+							size = new qq.maps.Size(35, 40),
+							origin = new qq.maps.Point(0, 0),
+							imageSize = new qq.maps.Size(35, 40),
+							icon = new qq.maps.MarkerImage('../image/dqwz.png', size, origin, anchor, imageSize);
+						var marker = new qq.maps.Marker({
+							icon: icon,
+							map: map,
+							position: results.detail.latLng
+						});
+					}
+				});
+
+				// 检测站图标
+				var label = new qq.maps.Label({
+					position: latLngs,
+					map: map,
+					content: '检'
+				});
+				var cssC = {
+					height: "30px",
+					width: "30px",
+					borderRadius: "50%",
+					color: "#FFE344",
+					fontSize: "16px",
+					fontWeight: "bold",
+					lineHeight: "30px",
+					//  backgroundColor :"",  
+					textAlign: "center",
+					border: '0'
+				};
+				label.setMap(map);
+				label.setStyle(cssC);
+			}
+			//选择时间
+			var oDate = document.getElementById('datetime-picker');
+			$("#datetime-picker").datetimePicker({
+				times: function() {
+					return;
+				},
+				parse: function(str) {
+					var t = str.split(this.datetimeSplit);
+					return t[0].split(/\D/).concat(t[1]);
+				},
+				onChange: function(picker, values, displayValues) {
+					var values = values[0] + "-" + values[1] + "-" + values[2];
+					vue.$data.date = values;
+					console.log(vue.$data.date);
+					// var timestr = date.replace(/-/g,'/');
+					vue.$data.timestamp = new Date(values).getTime();
+					console.log(vue.$data.timestamp);
+				}
+			});
+
+			function fnTime() {}
+			//获取检测站
+			var getMapStation = "/gzh/getjczSj.yt";
+
+			function fnGetMapStation() {
+				var url = mHost + mServerName + getMapStation;
+				var params = {
+					jcrq: ''
+				}
+				$.ajax({
+					type: "post",
+					url: url,
+					data: params,
+					dataType: "jsonp",
+					success: function(result) {
+						console.log("获取检测站: " + JSON.stringify(result));
+						var data = result.data;
+						console.log("检测站: " + JSON.stringify(data));
+						var latLngArr = [];
+						for (var i = 0; i < data.length; i++) {
+							if (data[i].jd != undefined && data[i].wd != undefined) {
+								vue.$data.jd = data[i].jd;
+								vue.$data.wd = data[i].wd;
+								var latLng = new qq.maps.LatLng(vue.$data.jd, vue.$data.wd);
+								console.log(vue.$data.jd, vue.$data.wd);
+								latLngArr.push(latLng);
+							}
+							// console.log("检测站: " + data[4].jd);
+							// console.log("检测站: " + data[4].wd);
+						}
+					},
+					error: function(jqXHR, textStatus) {
+
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

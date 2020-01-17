@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>检测站</title>
+		<!-- 引入 WeUI -->
+		<link rel="stylesheet" href="../css/weui/weui.min.css">
+		<!-- 引入 jquery-weui -->
+		<link rel="stylesheet" href="../css/jqweui/jquery-weui.css">
+		<style type="text/css">
+			html {
+				height: 100%
+			}
+
+			body {
+				height: 100%;
+				margin: 0px;
+				padding: 0px
+			}
+
+			#container {
+				width:100%;
+				height: 100%;
+				bottom: 0px;
+				position: relative;
+			}
+			.map_ts {
+				height: 35px;
+				width: 80%;
+				background: url(../image/tl.png)  center no-repeat;
+				background-size: 100% 100%;
+				position: fixed;
+				bottom: 30px;
+				left: 10%;
+				z-index: 99;
+			}
+			.check_time_box {
+				position: fixed;
+				top: 30px;
+				left: 0;
+				width: 100%;
+				height: 40px;
+				z-index: 99;
+				display: flex;
+				display: -webkit-flex;
+				align-items: center;
+				-webkit-align-items: center;
+				justify-content: center;
+				-webkit-justify-content: center;
+				box-sizing: border-box;
+			}
+			.check_btn {
+				margin: 0 15px;
+				width: 60px;
+				min-width: 60px;
+				text-align: center;
+				height: 32px;
+				line-height: 32px;
+				color: #FFFFFF;
+				font-size: 14px;
+				font-weight: 700;
+				background-color: #007AFF;
+				border-radius: 4px;
+			}
+			.dis_check_btn {
+				background-color: #808080 !important;
+				color: #FFFFFF !important;
+			}
+			.check_time {
+				margin: 0 5px;
+				box-sizing: border-box;
+				width: 100%;
+				height: 32px;
+				border: 1px solid #A1A1A1;
+				border-radius: 4px;
+			}
+			.check_time input {
+				outline: none;
+				width: 100%;
+				height: 30px;
+				padding: 0 10px;
+				box-sizing: border-box;
+				border: 0;
+				text-align: center;
+				color: #333333;
+			}
+		</style>
+	</head>
+	<body ontouchstart>
+		<div id="container">
+		</div>
+		<div class="check_time_box" id="appId">
+			<div class="check_btn" :class="fnAreaLimit()" @click="fnBeforeDay();">
+				上一天
+			</div>
+			<div class="check_time">
+				<input type="text" readonly="readonly" value="" v-model="date">
+			</div>
+			<div class="check_btn" @click="fnAfterDay();">
+				下一天
+			</div>
+		</div>
+		<div class="map_ts">
+		</div>
+		<script type="text/javascript" src="../js/jquery-1.12.4-min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/fastclick.js" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				FastClick.attach(document.body);
+			})
+		</script>
+		<script type="text/javascript" src="../script/vue.js"></script>
+		<script type="text/javascript" src="../js/url.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/date.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=KGXiPSGZBrujz7brgA9SYMv104V4xGcU"></script>
+		<script type="text/javascript">
+			// 初始化MVVM框架
+			var vue = new Vue({
+				el: '#appId',
+				data: {
+					date: '',
+					timestamp: '',
+					jd: '34.64821',
+					wd: '113.51331',
+					limit: true
+				},
+				methods: {
+					fnAreaLimit: function(){
+						return this.limit?"dis_check_btn":"";
+					},
+					fnBeforeDay: fnBeforeDay,
+					fnAfterDay: fnAfterDay
+				}
+			});
+			// 用户坐标
+			var userLat = 0,
+				userLng = 0;
+			var map;
+			// 创建一个数组存储坐标
+			var pointArray = new Array();
+			// 上报数据
+			var data;
+			$(function() {
+				data = JSON.parse(window.localStorage.getItem("data"));
+				var nowDate = new Date().Format("yyyy-MM-dd");
+				var checkDate = data.date;
+				if(checkDate == '' || checkDate == null){
+					checkDate = new Date().Format("yyyy-MM-dd");
+					vue.$data.limit = true;
+				} else {
+					var d = new Date(checkDate).getTime();
+					var n = new Date(nowDate).getTime();
+					if(d == n){
+						vue.$data.limit = true;
+					} else {
+						vue.$data.limit = false;
+					}
+				}
+				vue.$data.date = checkDate;
+				// 初始化地图
+				initBmap();
+				// 获取检测站数据
+				fnGetMapStation();
+			});
+			// 初始化地图
+			function initBmap() {
+				map = new BMap.Map("container");
+				var point = new BMap.Point(116.331398, 39.897445);
+				map.centerAndZoom(point, 12);
+
+				console.log(">> 开始定位 >> ");
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(r) {
+					if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+						console.log("定位成功 >> ");
+						// TODO 修改经纬度，接入用户定位坐标
+						// addMarker(new BMap.Point(r.point.lng, r.point.lat), {}, "user");
+						addMarker(new BMap.Point(112.773321, 36.326762), {}, "user");
+						map.panTo(r.point);
+						// TODO 修改经纬度，接入用户定位坐标
+						// map.centerAndZoom(new BMap.Point(r.point.lng, r.point.lat), 14);
+						map.centerAndZoom(new BMap.Point(112.773321, 36.326762), 14);
+					} else {
+						console.log("定位失败 >> ");
+						console.log('failed' + this.getStatus());
+					}
+				});
+			}
+			// 添加标记
+			function addMarker(point, data, type) { 
+				// 创建图标对象
+				var myIcon;
+				if(type == "user"){
+					myIcon = new BMap.Icon("../image/user_location.png", new BMap.Size(29, 39), {
+						anchor: new BMap.Size(15, 20)
+					});
+					data.jczjc = "";
+				} else if(type == "data"){
+					var iconPath = "../image/jcz_1.png";
+					if(Number(data.yys) <= 25){
+						iconPath = "../image/jcz_1.png";
+					} else if(Number(data.yys) <= 50){
+						iconPath = "../image/jcz_25.png";
+					} else if(Number(data.yys) <= 75){
+						iconPath = "../image/jcz_75.png";
+					} else if(Number(data.yys) <= 100){
+						iconPath = "../image/jcz_100.png";
+					} else {
+						iconPath = "../image/jcz_100.png";
+					}
+					myIcon = new BMap.Icon(iconPath, new BMap.Size(31, 31), {
+						anchor: new BMap.Size(15, 15)
+					});
+				}
+				// 创建标注对象并添加到地图   
+				var marker = new BMap.Marker(point, {
+					icon: myIcon,
+					title: data.jczjc
+				});
+				//增加点
+				map.addOverlay(marker);
+				marker.customData = data; //自定义参数id
+				marker.addEventListener("click", attribute);
+			}
+
+			//获取覆盖物位置
+			function attribute(e) {
+				var p = e.target;
+				var data = e.target.customData;
+				window.localStorage.setItem("spkid", data.pkid);
+				window.localStorage.setItem("jczjc", data.jczjc);
+				window.localStorage.setItem("yys", data.yys);
+				window.localStorage.setItem("checkDate", vue.$data.date);
+				window.history.back()
+				// alert("data=" + JSON.stringify(data) + ", marker的位置是" + p.getPosition().lng + "," + p.getPosition().lat);
+			}
+			// 获取检测站
+			var getMapStation = "/gzh/getjczSj.yt";
+			// 获取检测站数据
+			function fnGetMapStation() {
+				var url = mHost + mServerName + getMapStation;
+				var params = {
+					jcrq: vue.$data.date
+				}
+				$.ajax({
+					type: "post",
+					url: url,
+					data: params,
+					dataType: "jsonp",
+					success: function(result) {
+						console.log("获取检测站: " + JSON.stringify(result));
+						var data = result.data;
+						var latLngArr = [];
+						map.removeOverlay(); // 删除标记
+						for (var i = 0; i < data.length; i++) {
+							var dataItem = data[i];
+							if (dataItem.jd != undefined && dataItem.wd != undefined) {
+								vue.$data.jd = dataItem.jd;
+								vue.$data.wd = dataItem.wd;
+								addMarker(new BMap.Point(vue.$data.jd, vue.$data.wd), dataItem, "data");
+								pointArray[i] = new BMap.Point(vue.$data.jd, vue.$data.wd);
+							}
+						}
+						setTimeout(function() {
+							//让所有点在视野范围内
+							// map.setViewport(pointArray);
+						}, 800);
+					},
+					error: function(jqXHR, textStatus) {
+
+					}
+				});
+			}
+			// 上一天
+			function fnBeforeDay(){
+				var n = new Date().Format("yyyy-MM-dd");
+				if(!vue.$data.limit){
+					var d = new Date(vue.$data.date).getTime();
+					d -= 24*60*60*1000;
+					var nextDay = new Date(d).Format("yyyy-MM-dd");
+					vue.$data.date = nextDay;
+					if(n == nextDay){
+						vue.$data.limit = true;
+					} else {
+						vue.$data.limit = false;
+					}
+					fnGetMapStation();
+				}
+			}
+			// 下一天
+			function fnAfterDay(){
+				var d = new Date(vue.$data.date).getTime();
+				d += 24*60*60*1000;
+				var nextDay = new Date(d).Format("yyyy-MM-dd");
+				vue.$data.date = nextDay;
+				vue.$data.limit = false;
+				fnGetMapStation();
+			}
+		</script>
+	</body>
+</html>

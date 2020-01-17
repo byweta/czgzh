@@ -178,12 +178,12 @@
 					if (this.getStatus() == BMAP_STATUS_SUCCESS) {
 						console.log("定位成功 >> ");
 						// TODO 修改经纬度，接入用户定位坐标
-						// addMarker(new BMap.Point(r.point.lng, r.point.lat), {}, "user");
-						addMarker(new BMap.Point(112.773321, 36.326762), {}, "user");
+						addMarker(new BMap.Point(r.point.lng, r.point.lat), {}, "user");
+						// addMarker(new BMap.Point(112.773321, 36.326762), {}, "user");
 						map.panTo(r.point);
 						// TODO 修改经纬度，接入用户定位坐标
-						// map.centerAndZoom(new BMap.Point(r.point.lng, r.point.lat), 14);
-						map.centerAndZoom(new BMap.Point(112.773321, 36.326762), 14);
+						map.centerAndZoom(new BMap.Point(r.point.lng, r.point.lat), 14);
+						// map.centerAndZoom(new BMap.Point(112.773321, 36.326762), 14);
 					} else {
 						console.log("定位失败 >> ");
 						console.log('failed' + this.getStatus());

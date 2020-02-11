@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- author：袁玉玲 / createTime：2020年1月6日 -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>检测记录win</title>
+		<!-- 引入 WeUI -->
+		<link rel="stylesheet" href="../css/weui/weui.min.css">
+		<!-- 引入 jquery-weui -->
+		<link rel="stylesheet" href="../css/jqweui/jquery-weui.css">
+		<style>
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+			}
+			.container {
+				padding-bottom: 20px;
+			}
+			.record_item {
+				margin: 0 15px;
+				margin-top: 15px;
+				padding: 5px 6px;
+				box-sizing: border-box;
+				border-radius: 4px;
+				background: #FDFDFD;
+				box-shadow: 0 3px 6px 0 rgba(120, 120, 220, .4);
+			}
+			.item_line {
+				flex: 1;
+				-webkit-flex: 1;
+				height: 26px;
+				line-height: normal;
+				display: flex;
+				display: -webkit-flex;
+				align-items: center;
+				-webkit-align-items: center;
+				justify-content: center;
+				-webkit-justify-content: center;
+			}
+			.item_line_w3 {
+				flex: 3;
+				-webkit-flex: 3;
+			}
+			.item_line_w2 {
+				flex: 1;
+				-webkit-flex: 1;
+			}
+			.item_line_justify {
+				justify-content: flex-start;
+				-webkit-justify-content: flex-start;
+			}
+			.item_title {
+				width: 80px;
+				min-width: 80px;
+			}
+			.small_item_title {
+				width: 50px;
+				min-width: 50px;
+			}
+			.item_text {
+				width: 100%;
+				
+			}
+			.item_btn {
+				width: 60px;
+				text-align: center;
+				height: 20px;
+				line-height: 20px;
+				font-size: 13px;
+				color: #007AFF;
+				border: 1px solid #007AFF;
+				border-radius: 2px;
+			}
+			.item_btn_fied {
+				color: #CE3C39;
+				border-color: #CE3C39;
+			}
+			.item_btn_dis {
+				color: #8D8D8D;
+				border-color: #8D8D8D;
+			}
+			/* 超出单行显示省略号 */
+			.line_ellipsis {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.weui-prompt-input {
+				width: 100% !important;
+			}
+		</style>
+	</head>
+	<body ontouchstart>
+		<div class="container" id="appId">
+			<template v-for="(item, index) in dataList">
+				<div class="record_item">
+					<div class="item_line">
+						<div class="item_title">检测站:</div>
+						<div class="item_text line_ellipsis">{{item.jczjc}}</div>
+					</div>
+					<!-- <div class="item_line">
+						<div class="item_title">联系电话:</div>
+						<div class="item_text">--</div>
+					</div> -->
+					<div class="item_line">
+						<div class="item_line item_line_w3">
+							<div class="item_title">预约时间:</div>
+							<div class="item_text">{{item.jcsj}}</div>
+						</div>
+						<div class="item_line">
+							<div class="item_title small_item_title">序号:</div>
+							<div class="item_text">{{item.pdxh}}</div>
+						</div>
+					</div>
+					<div class="item_line">
+						<div class="item_line item_line_w3">
+							<div class="item_title">车牌号:</div>
+							<div class="item_text">{{item.cphm}}</div>
+						</div>
+						<template v-if="item.type == 1">
+							<div class="item_line item_line_justify">
+								<div class="item_btn item_btn_fied">已取消</div>
+							</div>
+						</template>
+						<template v-else>
+							<template v-if="fnShowByTime(item.jcsj)">
+								<div class="item_line item_line_justify">
+									<div class="item_btn" @click="fnCancelRecord(item, index)">取消预约</div>
+								</div>
+							</template>
+							<template v-else>
+								<div class="item_line item_line_justify">
+									<div class="item_btn item_btn_dis">已失效</div>
+								</div>
+							</template>
+						</template>
+					</div>
+				</div>
+			</template>
+		</div>
+		<script src="../js/jquery-2.1.4.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/fastclick.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function() {
+				FastClick.attach(document.body);
+			})
+		</script>
+		<script type="text/javascript" src="../js/jqweui/jquery-weui.min.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../js/url.js"></script>
+		<script type="text/javascript" src="../js/date.js"></script>
+		<script type="text/javascript" src="../script/vue.js"></script>
+		<script type="text/javascript" src="../script/layui/layui.all.js"></script>
+		<script type="text/javascript">
+			// 初始化双向绑定模型
+			var vue = new Vue({
+				el: '#appId',
+				data: {
+					dataList: []
+				},
+				methods: {
+					fnShowByTime: function(date) {
+						if(date == undefined || date == ''){
+							return false;
+						}
+						var now = new Date().getTime();
+						var data = new Date(date).getTime();
+						var nowStr = new Date().Format("yyyy-MM-dd");
+						if(date == nowStr){
+							return true;
+						}
+						return data > now;
+					},
+					fnCancelRecord: fnCancelRecord
+				}
+			});
+			var openId = "";
+			$(function() {
+				// 获取存储的微信用户openId
+				openId = window.localStorage.getItem("openId");
+				if (openId == undefined || openId == '') {
+					var timer = setInterval(function() {
+						openId = window.localStorage.getItem("openId");
+						if (openId != undefined && openId != '') {
+							clearInterval(timer);
+							// 请求我的预约数据
+							fnGetMyRecord();
+						}
+					}, 50);
+				} else {
+					// 请求我的预约数据
+					fnGetMyRecord();
+				}
+			});
+
+			// 获取我的记录数据
+			function fnGetMyRecord() {
+				var url = mHost + mServerName + "/gzh/getYYOpenIdList.yt";
+				var params = {
+					openid: openId
+				}
+				console.log("=== === >> 参数：" + JSON.stringify(params))
+				$.ajax({
+					type: "GET",
+					url: url,
+					data: params,
+					dataType: "jsonp",
+					success: function(result) {
+						console.log("=== === >> 获取预约检车记录数据: " + JSON.stringify(result));
+						if (result.code != undefined && result.code == '1') {
+							// 获取成功
+							vue.dataList = [];
+							if (result.data.length != 0) {
+								vue.dataList = result.data;
+							}
+						} else {
+							// 未获取到数据
+							vue.dataList = [];
+							$.toast("暂无数据！", 'cancel');
+						}
+					},
+					error: function(jqXHR, textStatus) {
+						$.toast("服务异常！", 'cancel')
+					}
+				});
+			}
+			// 询问取消我的预约记录
+			function fnCancelRecord(data, index) {
+				$.prompt({
+					title: "<p style='text-align: left; font-weight: 700;'>确定取消预约吗？</p>",
+					text: "<p style='text-align: left;'>取消后不可恢复，需重新预约！<br/>请输入取消预约原因：</p>",
+					input: '',
+					empty: false, // 是否允许为空
+					onOK: function(input) {
+						//点击确认
+						console.log("=== === >> "+input);
+						data.reason = input;
+						fnAjaxCancelRecord(data, index);
+					},
+					onCancel: function() {
+						//点击取消
+					}
+				});
+			}
+			// 取消我的预约记录
+			function fnAjaxCancelRecord(data, index) {
+				var url = mHost + mServerName + "/gzh/setType.yt";
+				var params = {
+					pkid: data.pkid,
+					reason: data.reason
+				}
+				console.log("=== === >> 参数：" + JSON.stringify(params));
+				$.ajax({
+					type: "GET",
+					url: url,
+					data: params,
+					dataType: "jsonp",
+					success: function(result) {
+						console.log("=== === >> 取消预约记录结果: " + JSON.stringify(result));
+						if (result.code != undefined && result.code == '1') {
+							$.toast("取消预约成功！", "text")
+							// 取消成功
+							vue.dataList[index].type = '1';
+						} else {
+							// 取消失败
+							$.toast("取消预约失败！", 'cancel');
+						}
+					},
+					error: function(jqXHR, textStatus) {
+						$.toast("服务异常！", 'cancel')
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

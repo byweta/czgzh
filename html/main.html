@@ -82,7 +82,7 @@
 				$(".framePage").hide();
 				$("#tabFrm0").show();
 				$('.weui-tabbar__item').on('click', function() {
-					window.localStorage.removeItem("navIndex");
+					window.localStorage.removeItem("navIndex")
 					$(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
 					var tabIndex = $(this).data("index");
 					$(".framePage").hide();
@@ -122,13 +122,13 @@
 			
 			// 获取当前微信用户的openId
 			function fnGetWxOpenId(){
-				// var url = mHost + mServerName + "";
+				// var url = mHost + mServerName + "/gzh/openId.yt";
 				var url = "http://192.168.120.218:8080/getWxOpenId";
 				var params = {
 					code: CODE
 				}
 				$.ajax({
-					type: "post",
+					type: "GET",
 					url: url,
 					data: params,
 					dataType: "jsonp",

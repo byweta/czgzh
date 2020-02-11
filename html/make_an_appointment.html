@@ -91,6 +91,20 @@
 				margin-left: 5px;
 				height: 14px;
 			}
+			.floatBtn {
+				position: fixed;
+				bottom: 50px;
+				right: 10px;
+				width: 80px;
+				text-align: center;
+				height: 26px;
+				line-height: 26px;
+				background: #009F95;
+				border-radius: 10px;
+				font-size: 14px;
+				color: #FFF9EC;
+				box-shadow: 0 0 10px 0 rgba(0,0,0, .3);
+			}
         </style>
 	</head>
 	<body ontouchstart>
@@ -100,7 +114,7 @@
 				<div class="login_title">
 					<div class="login_title1">检测站</div>
 					<input type="text" class="login_title2" placeholder="请选择.." readonly="readonly" v-model="record.mapLocation">
-					<div class="login_title3" tapmode onclick="fnOpenMap()"></div>
+					<div class="login_title3" onclick="fnOpenMap()"></div>
 				</div>
 				<div class="login_title">
 					<div class="login_title1">检测时间</div>
@@ -153,6 +167,7 @@
 				提交
 			</div>
 		</div>
+		<div class="floatBtn" onclick="fnShowMyRecord()">我的预约</div>
 		<!-- <script type="text/javascript" src="../js/jquery-2.1.4.js" charset="utf-8"></script> -->
 		<script src="../js/jquery-1.12.4-min.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript" src="../js/fastclick.js" charset="utf-8"></script>
@@ -292,6 +307,13 @@
 				// console.log("=== === >> 打开地图页面。");
 				window.top.location.href = "../html/bmap.html";
 			}
+			
+			// 打开我的预约记录页面
+			function fnShowMyRecord(){
+				window.localStorage.setItem("data", JSON.stringify(vue.$data.record));
+				// console.log("=== === >> 打开我的预约页面。");
+				window.top.location.href = "../html/user_record.html";
+			}
 			// 预约信息提交
 			var addAppointmentUrl = "/gzh/setYyCj.yt";
 			// 提交预约信息
@@ -306,7 +328,7 @@
 					openId: openId
 				}
 				$.ajax({
-					type: "post",
+					type: "GET",
 					url: url,
 					data: params,
 					dataType: "jsonp",

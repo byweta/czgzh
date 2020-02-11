@@ -22,21 +22,23 @@
 			}
 
 			#container {
-				width:100%;
+				width: 100%;
 				height: 100%;
 				bottom: 0px;
 				position: relative;
 			}
+
 			.map_ts {
 				height: 35px;
 				width: 80%;
-				background: url(../image/tl.png)  center no-repeat;
+				background: url(../image/tl.png) center no-repeat;
 				background-size: 100% 100%;
 				position: fixed;
 				bottom: 30px;
 				left: 10%;
 				z-index: 99;
 			}
+
 			.check_time_box {
 				position: fixed;
 				top: 30px;
@@ -52,6 +54,7 @@
 				-webkit-justify-content: center;
 				box-sizing: border-box;
 			}
+
 			.check_btn {
 				margin: 0 15px;
 				width: 60px;
@@ -65,10 +68,12 @@
 				background-color: #007AFF;
 				border-radius: 4px;
 			}
+
 			.dis_check_btn {
 				background-color: #808080 !important;
 				color: #FFFFFF !important;
 			}
+
 			.check_time {
 				margin: 0 5px;
 				box-sizing: border-box;
@@ -77,6 +82,7 @@
 				border: 1px solid #A1A1A1;
 				border-radius: 4px;
 			}
+
 			.check_time input {
 				outline: none;
 				width: 100%;
@@ -129,8 +135,8 @@
 					limit: true
 				},
 				methods: {
-					fnAreaLimit: function(){
-						return this.limit?"dis_check_btn":"";
+					fnAreaLimit: function() {
+						return this.limit ? "dis_check_btn" : "";
 					},
 					fnBeforeDay: fnBeforeDay,
 					fnAfterDay: fnAfterDay
@@ -148,13 +154,13 @@
 				data = JSON.parse(window.localStorage.getItem("data"));
 				var nowDate = new Date().Format("yyyy-MM-dd");
 				var checkDate = data.date;
-				if(checkDate == '' || checkDate == null){
+				if (checkDate == '' || checkDate == null) {
 					checkDate = new Date().Format("yyyy-MM-dd");
 					vue.$data.limit = true;
 				} else {
 					var d = new Date(checkDate).getTime();
 					var n = new Date(nowDate).getTime();
-					if(d == n){
+					if (d == n) {
 						vue.$data.limit = true;
 					} else {
 						vue.$data.limit = false;
@@ -191,23 +197,23 @@
 				});
 			}
 			// 添加标记
-			function addMarker(point, data, type) { 
+			function addMarker(point, data, type) {
 				// 创建图标对象
 				var myIcon;
-				if(type == "user"){
+				if (type == "user") {
 					myIcon = new BMap.Icon("../image/user_location.png", new BMap.Size(29, 39), {
 						anchor: new BMap.Size(15, 20)
 					});
 					data.jczjc = "";
-				} else if(type == "data"){
+				} else if (type == "data") {
 					var iconPath = "../image/jcz_1.png";
-					if(Number(data.yys) <= 25){
+					if (Number(data.yys) <= 25) {
 						iconPath = "../image/jcz_1.png";
-					} else if(Number(data.yys) <= 50){
+					} else if (Number(data.yys) <= 50) {
 						iconPath = "../image/jcz_25.png";
-					} else if(Number(data.yys) <= 75){
+					} else if (Number(data.yys) <= 75) {
 						iconPath = "../image/jcz_75.png";
-					} else if(Number(data.yys) <= 100){
+					} else if (Number(data.yys) <= 100) {
 						iconPath = "../image/jcz_100.png";
 					} else {
 						iconPath = "../image/jcz_100.png";
@@ -231,13 +237,37 @@
 			function attribute(e) {
 				var p = e.target;
 				var data = e.target.customData;
-				window.localStorage.setItem("spkid", data.pkid);
-				window.localStorage.setItem("jczjc", data.jczjc);
-				window.localStorage.setItem("yys", data.yys);
-				window.localStorage.setItem("checkDate", vue.$data.date);
-				window.history.back()
+				fnStationInfo(data);
 				// alert("data=" + JSON.stringify(data) + ", marker的位置是" + p.getPosition().lng + "," + p.getPosition().lat);
 			}
+			// 检车站信息展示
+			function fnStationInfo(data) {
+				$.modal({
+					title: data.jczjc,
+					text: "<p style='text-align: left;'>联系电话："+data.jczbgdh+"；<br/>工作时间："+data.sw+"~"+data.xw+"；<br/>地址："+data.jczdz + "；<br/>当前预约人数：" + data.yys + "人</p>",
+					// text: "<p style='text-align: left;'>当前预约人数：" + data.yys + "人；<br/>最大预约人数：" + data.zdyys + "人；<br/>地址：" + data.pkid + "</p>",
+					buttons: [
+						{
+							text: "取消",
+							className: "default",
+							onClick: function() {
+								
+							},
+						},
+						{
+							text: "选择",
+							onClick: function() {
+								window.localStorage.setItem("spkid", data.pkid);
+								window.localStorage.setItem("jczjc", data.jczjc);
+								window.localStorage.setItem("yys", data.yys);
+								window.localStorage.setItem("checkDate", vue.$data.date);
+								window.history.back();
+							}
+						}
+					]
+				});
+			}
+
 			// 获取检测站
 			var getMapStation = "/gzh/getjczSj.yt";
 			// 获取检测站数据
@@ -276,14 +306,14 @@
 				});
 			}
 			// 上一天
-			function fnBeforeDay(){
+			function fnBeforeDay() {
 				var n = new Date().Format("yyyy-MM-dd");
-				if(!vue.$data.limit){
+				if (!vue.$data.limit) {
 					var d = new Date(vue.$data.date).getTime();
-					d -= 24*60*60*1000;
+					d -= 24 * 60 * 60 * 1000;
 					var nextDay = new Date(d).Format("yyyy-MM-dd");
 					vue.$data.date = nextDay;
-					if(n == nextDay){
+					if (n == nextDay) {
 						vue.$data.limit = true;
 					} else {
 						vue.$data.limit = false;
@@ -292,9 +322,9 @@
 				}
 			}
 			// 下一天
-			function fnAfterDay(){
+			function fnAfterDay() {
 				var d = new Date(vue.$data.date).getTime();
-				d += 24*60*60*1000;
+				d += 24 * 60 * 60 * 1000;
 				var nextDay = new Date(d).Format("yyyy-MM-dd");
 				vue.$data.date = nextDay;
 				vue.$data.limit = false;

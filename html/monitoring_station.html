@@ -293,11 +293,11 @@
 						} else {
 							// 未获取到数据
 							vue.dataList = [];
-							$.toast("暂无数据！")
+							$.toast("暂无数据！", 'cancel')
 						}
 					},
 					error: function(jqXHR, textStatus) {
-						$.toast("服务异常！")
+						$.toast("服务异常！", 'cancel')
 					}
 				});
 			}

@@ -75,7 +75,7 @@
 				CODE = fnGetQueryString("code");
 				console.log("=== === >> code: "+CODE);
 				// 获取微信openId
-				// fnGetWxOpenId();
+				fnGetWxOpenId();
 				// 测试用openId TODO 
 				window.localStorage.setItem("openId", openId);
 				
@@ -122,8 +122,8 @@
 			
 			// 获取当前微信用户的openId
 			function fnGetWxOpenId(){
-				// var url = mHost + mServerName + "/gzh/openId.yt";
-				var url = "http://192.168.120.218:8080/getWxOpenId";
+				var url = mHost + mServerName + "/gzh/getWxOpenId.yt";
+				// var url = "http://192.168.120.218:8080/getWxOpenId";
 				var params = {
 					code: CODE
 				}
